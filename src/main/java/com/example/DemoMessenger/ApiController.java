@@ -2,6 +2,8 @@ package com.example.DemoMessenger;
 
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 @RestController
 public class ApiController {
@@ -47,18 +49,18 @@ public class ApiController {
     }
 
     @GetMapping("themes/{name}")
-    public ArrayList<String> getTheme(@PathVariable("name") String name) {
+    public ArrayList<Comment> getTheme(@PathVariable("name") String name) {
         Theme theme = null;
         for (Theme t : themes) {
             if (t.getName().equals(name)) {
                 theme = t;
             }
         }
-        return theme.getComments();
+        return theme.getFullComments();
     }
 
     @PostMapping("themes/{name}")
-    public void addComment(@PathVariable("name") String name, @RequestBody String comment) {
+    public void addComment(@PathVariable("name") String name, @RequestBody Comment comment) {
         for (Theme t : themes) {
             if (t.getName().equals(name)) {
                 t.addComment(comment);
@@ -66,8 +68,8 @@ public class ApiController {
         }
     }
 
-    @DeleteMapping("themes/{name}")
-    public void deleteComment(@PathVariable("name") String name, @RequestBody String comment) {
+    @DeleteMapping("themes/{name}/{comment}")
+    public void deleteComment(@PathVariable("name") String name, @PathVariable("comment") String comment) {
         for (Theme t : themes) {
             if (t.getName().equals(name)) {
                 for (String c : t.getComments()) {
@@ -86,5 +88,26 @@ public class ApiController {
                 t.updateComment(comment, newComment);
             }
         }
+    }
+
+    @GetMapping("themes/{name}/sort")
+    public ArrayList<Comment> getCommentsByDate(@PathVariable("name") String name) {
+        for (Theme t : themes) {
+            if (t.getName().equals(name)) {
+                Collections.sort(t.getFullComments(), new Comparator<Comment>() {
+                    @Override
+                    public int compare(Comment o1, Comment o2) {
+                        if (o1.getDate().before(o2.getDate())) {
+                            return 1;
+                        }
+                        else {
+                            return -1;
+                        }
+                    }
+                });
+                return t.getFullComments();
+            }
+        }
+        return null;
     }
 }
