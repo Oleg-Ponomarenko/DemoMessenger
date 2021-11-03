@@ -18,6 +18,17 @@ public class Theme {
         comments.remove(comment);
     }
 
+    public void updateComment(String comment, String newComment) {
+        int i = 0;
+        for (String c : comments) {
+            if (c.equals(comment)) {
+                comments.remove(i);
+                comments.add(i, newComment);
+            }
+            i++;
+        }
+    }
+
     public ArrayList<String> getComments() {
         return comments;
     }

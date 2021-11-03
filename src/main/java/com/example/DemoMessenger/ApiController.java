@@ -57,8 +57,34 @@ public class ApiController {
         return theme.getComments();
     }
 
-    /* @PostMapping("themes/{name}")
-    public void addComment(@PathVariable String comment) {
+    @PostMapping("themes/{name}")
+    public void addComment(@PathVariable("name") String name, @RequestBody String comment) {
+        for (Theme t : themes) {
+            if (t.getName().equals(name)) {
+                t.addComment(comment);
+            }
+        }
+    }
 
-    } */
+    @DeleteMapping("themes/{name}")
+    public void deleteComment(@PathVariable("name") String name, @RequestBody String comment) {
+        for (Theme t : themes) {
+            if (t.getName().equals(name)) {
+                for (String c : t.getComments()) {
+                    if (c.equals(comment)) {
+                        t.deleteComment(c);
+                    }
+                }
+            }
+        }
+    }
+
+    @PutMapping("themes/{name}/{comment}")
+    public void updateComment(@PathVariable("name") String name, @PathVariable("comment") String comment, @RequestBody String newComment) {
+        for (Theme t : themes) {
+            if (t.getName().equals(name)) {
+                t.updateComment(comment, newComment);
+            }
+        }
+    }
 }
